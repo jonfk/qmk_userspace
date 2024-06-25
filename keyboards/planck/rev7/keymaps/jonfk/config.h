@@ -42,4 +42,4 @@
 */
 // #define MIDI_ADVANCED
 
-#define TAPPING_TERM 250
+#define TAPPING_TERM 210

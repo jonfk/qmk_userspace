@@ -22,14 +22,14 @@ enum planck_keycodes { QWERTY = SAFE_RANGE, COLEMAK, DVORAK, PLOVER, BACKLIT, EX
 
 // Left-hand home row mods
 #define HOME_A LGUI_T(KC_A)
-#define HOME_O LCTL_T(KC_O)
+#define HOME_O LALT_T(KC_O)
 #define HOME_E LSFT_T(KC_E)
-#define HOME_U LALT_T(KC_U)
+#define HOME_U LCTL_T(KC_U)
 
 // Right-hand home row mods
-#define HOME_H RALT_T(KC_H)
+#define HOME_H RCTL_T(KC_H)
 #define HOME_T RSFT_T(KC_T)
-#define HOME_N LCTL_T(KC_N)
+#define HOME_N LALT_T(KC_N)
 #define HOME_S RGUI_T(KC_S)
 
 #define LOWER MO(_LOWER)
