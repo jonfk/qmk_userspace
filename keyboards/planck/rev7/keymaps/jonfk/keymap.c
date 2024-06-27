@@ -378,7 +378,25 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 }
 
 const uint16_t PROGMEM combo_jk[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM caps_combo[] = {HR_E, HR_T, COMBO_END};
 
-combo_t key_combos[] = {
-    COMBO(combo_jk, KC_ESC)
+enum combo_events {
+  ESC_COMBO,
+  CAPS_COMBO,
+  // Other combos...
+  COMBO_LENGTH
 };
+combo_t key_combos[] = {
+    [ESC_COMBO] = COMBO(combo_jk, KC_ESC),
+    [CAPS_COMBO] = COMBO_ACTION(caps_combo),
+};
+
+void process_combo_event(uint16_t combo_index, bool pressed) {
+  switch(combo_index) {
+    case CAPS_COMBO:
+      if (pressed) {
+        caps_word_on();  // Activate Caps Word!
+      }
+      break;
+  }
+}
