@@ -42,4 +42,5 @@
 */
 // #define MIDI_ADVANCED
 
-#define TAPPING_TERM 210
+#define TAPPING_TERM 180
+#define PERMISSIVE_HOLD

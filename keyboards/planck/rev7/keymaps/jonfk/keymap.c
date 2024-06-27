@@ -16,24 +16,53 @@
 
 #include QMK_KEYBOARD_H
 
-enum planck_layers {_DVORAK, _QWERTY, _COLEMAK, _LOWER, _RAISE, _PLOVER, _ADJUST };
+enum planck_layers {_DVORAK, _QWERTY, _COLEMAK, _LOWER, _RAISE, _PLOVER, _ADJUST, _NAV};
 
 enum planck_keycodes { QWERTY = SAFE_RANGE, COLEMAK, DVORAK, PLOVER, BACKLIT, EXT_PLV };
 
-// Left-hand home row mods
-#define HOME_A LGUI_T(KC_A)
-#define HOME_O LALT_T(KC_O)
-#define HOME_E LSFT_T(KC_E)
-#define HOME_U LCTL_T(KC_U)
+// Dvorak: Left-hand home row mods
+#define HR_A LGUI_T(KC_A)
+#define HR_O LALT_T(KC_O)
+#define HR_E LSFT_T(KC_E)
+#define HR_U LCTL_T(KC_U)
 
-// Right-hand home row mods
-#define HOME_H RCTL_T(KC_H)
-#define HOME_T RSFT_T(KC_T)
-#define HOME_N LALT_T(KC_N)
-#define HOME_S RGUI_T(KC_S)
+// Dvorak: Right-hand home row mods
+#define HR_H RCTL_T(KC_H)
+#define HR_T RSFT_T(KC_T)
+#define HR_N LALT_T(KC_N)
+#define HR_S RGUI_T(KC_S)
+
+// Dvorak: Right-hand bottom row mods
+#define BR_M RCTL_T(KC_M)
+#define BR_W RSFT_T(KC_W)
+#define BR_V LALT_T(KC_V)
+#define BR_Z RGUI_T(KC_Z)
+
+/*
+Note that KP keys are used because of Mod Tap caveats not working with keycodes past a certain level.
+    See: https://docs.qmk.fm/mod_tap#caveats
+*/
+// NAV: Left-hand home row mods
+#define HR_GRV LGUI_T(KC_GRV)
+#define HR_ASTR LALT_T(KC_KP_ASTERISK)
+#define HR_PLUS LSFT_T(KC_KP_PLUS)
+#define HR_EQL LCTL_T(KC_EQL)
+
+// NAV: Right-hand home row mods
+#define HR_SLSH RCTL_T(KC_SLSH)
+#define HR_LCBR RSFT_T(KC_LCBR)
+#define HR_RCBR LALT_T(KC_RCBR)
+#define HR_BSLS RGUI_T(KC_BSLS)
+
+// NAV: Right-hand bottom row mods
+// First finger not necessary, pass through
+#define BR_LBRC RSFT_T(KC_LBRC)
+#define BR_RBRC LALT_T(KC_RBRC)
+// last finger not necessary, pass through
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
+#define NAV MO(_NAV)
 
 /* clang-format off */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -51,9 +80,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_DVORAK] = LAYOUT_planck_grid(
     KC_ESC,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC,
-    KC_TAB,  HOME_A,  HOME_O,  HOME_E,  HOME_U,  KC_I,    KC_D,    HOME_H,  HOME_T,  HOME_N,  HOME_S,  KC_MINS,
+    KC_TAB,  HR_A,    HR_O,    HR_E,    HR_U,    KC_I,    KC_D,    HR_H,    HR_T,    HR_N,    HR_S,    KC_MINS,
     KC_LSFT, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_ENT,
-    BACKLIT, KC_LGUI, KC_LCTL, KC_LALT, LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    BACKLIT, KC_LGUI, KC_LCTL, NAV,     LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 /* Qwerty
@@ -92,6 +121,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     BACKLIT, KC_LGUI, KC_LCTL, KC_LALT, LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
+
 /* Lower
  * ,-----------------------------------------------------------------------------------.
  * |      |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   (  |   )  |   ?  | Bksp |
@@ -103,11 +133,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
+
 [_LOWER] = LAYOUT_planck_grid(
-    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_LPRN, KC_RPRN, KC_QUES, KC_BSPC,
-    KC_DEL,  KC_GRV,  KC_ASTR, KC_PLUS, KC_EQL,  _______, KC_PIPE, KC_SLSH, KC_LCBR, KC_RCBR, KC_BSLS, _______,
-    _______, KC_TILD, _______, KC_DQUO, KC_QUOT, _______, _______, _______, KC_LBRC, KC_RBRC, _______, _______, 
-    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+//|-----------------------------------------------------------------------------------------------------------------------.
+    _______,  KC_EXLM,   KC_AT,   KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,  KC_LPRN,  KC_RPRN,  KC_QUES, KC_BSPC,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    KC_DEL,   HR_GRV,   HR_ASTR,  HR_PLUS,  HR_EQL,   _______,  KC_PIPE,  HR_SLSH,  HR_LCBR,  HR_RCBR,  HR_BSLS, _______,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    _______,  KC_TILD,  _______,  KC_DQUO,  KC_QUOT,  _______,  _______,  _______,  KC_LBRC,  KC_RBRC,  _______, _______,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_MNXT,  KC_VOLD,  KC_VOLU, KC_MPLY
+//|-----------------------------------------------------------------------------------------------------------------------.
 ),
 
 /* Raise
@@ -126,6 +162,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_DEL,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
     _______, KC_F11,  KC_F12,  _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+),
+
+/* Nav
+ * ,-----------------------------------------------------------------------------------.
+ * |      |      | Cut  | Copy |Paste |      |      |      |      |      |      | Bksp |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * | Del  |      |      | Left |Right |Pg Up |      | Ctrl |Shift | Alt  | GUI  |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      | Down |  Up  |Pg Dn |      |      |      |      |      |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * `-----------------------------------------------------------------------------------'
+ */
+
+[_NAV] = LAYOUT_planck_grid(
+//|-----------------------------------------------------------------------------------------------------------------------.
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_BSPC,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    KC_DEL,   _______,  _______,  KC_LEFT,  KC_RIGHT, KC_PGUP,  _______,  KC_RCTL,  KC_RSFT,  KC_RALT,  KC_RGUI,  _______,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    _______,  _______,  _______,  KC_DOWN,   KC_UP,   KC_PGDN,  _______,  _______,  _______,  _______,  _______,  _______,
+//|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
+//|-----------------------------------------------------------------------------------------------------------------------.
 ),
 
 /* Plover layer (http://opensteno.org)
