@@ -18,7 +18,7 @@
 
 enum planck_layers {_DVORAK, _QWERTY, _COLEMAK, _LOWER, _RAISE, _PLOVER, _ADJUST, _NAV};
 
-enum planck_keycodes { QWERTY = SAFE_RANGE, COLEMAK, DVORAK, PLOVER, BACKLIT, EXT_PLV, MT_TILD, MT_DQUO };
+enum planck_keycodes { QWERTY = SAFE_RANGE, COLEMAK, DVORAK, PLOVER, BACKLIT, EXT_PLV, MT_TILD, MT_DQUO, MA_WI_COPY, MA_WI_CUT, MA_WI_PSTE };
 
 // Dvorak: Left-hand home row mods
 #define HR_A LGUI_T(KC_A)
@@ -182,9 +182,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |      |      | Cut  | Copy |Paste |      |      |      |      |      |      | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Del  |      |      | Left |Right |Pg Up |      | Ctrl |Shift | Alt  | GUI  |      |
+ * | Del  |      | Home | Left |Right |Pg Up |      | Ctrl |Shift | Alt  | GUI  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      | Down |  Up  |Pg Dn |      |      |      |      |      |      |
+ * |      |      | End  | Down |  Up  |Pg Dn |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
@@ -192,11 +192,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_NAV] = LAYOUT_planck_grid(
 //|-----------------------------------------------------------------------------------------------------------------------.
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_BSPC,
+    _______,  _______, MA_WI_CUT,MA_WI_COPY, MA_WI_PSTE,  _______,  _______,  _______,  _______,  _______,  _______,  KC_BSPC,
 //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
-    KC_DEL,   _______,  _______,  KC_LEFT,  KC_RIGHT, KC_PGUP,  _______,  _______,  _______,  _______,  _______,  _______,
+    KC_DEL,   _______,  KC_HOME,  KC_LEFT,  KC_RIGHT, KC_PGUP,  _______,  _______,  _______,  _______,  _______,  _______,
 //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
-    _______,  _______,  _______,  KC_DOWN,   KC_UP,   KC_PGDN,  _______,  OSM(MOD_RCTL),  OSM(MOD_RSFT),  OSM(MOD_RALT),  OSM(MOD_RGUI),  _______,
+    _______,  _______,  KC_END,  KC_DOWN,   KC_UP,   KC_PGDN,  _______,  OSM(MOD_RCTL),  OSM(MOD_RSFT),  OSM(MOD_RALT),  OSM(MOD_RGUI),  _______,
 //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+--------+----------|
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
 //|-----------------------------------------------------------------------------------------------------------------------.
@@ -253,6 +253,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        // Workaround for caveats of Mod-Taps on non-basic keycodes
         case BR_TILD:
             if (record->event.pressed && record->tap.count > 0) {
                 // send keycode
@@ -275,6 +276,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
+        // Macros
+        case MA_WI_COPY:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LCTL("c"));
+            }
+            break;
+        case MA_WI_CUT:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LCTL("x"));
+            }
+            break;
+        case MA_WI_PSTE:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LCTL("v"));
+            }
+            break;
+        // End Macros
         case QWERTY:
             if (record->event.pressed) {
                 print("mode just switched to qwerty and this is a huge string\n");
@@ -414,7 +432,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 }
 
 const uint16_t PROGMEM combo_jk[] = {KC_J, KC_K, COMBO_END};
-const uint16_t PROGMEM caps_combo[] = {HR_E, HR_T, COMBO_END};
+const uint16_t PROGMEM caps_combo[] = {BR_J, BR_W, COMBO_END};
 
 enum combo_events {
   ESC_COMBO,
