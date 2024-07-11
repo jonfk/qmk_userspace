@@ -96,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC,
     KC_TAB,  KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_MINS,
     KC_LSFT, BR_SCLN, BR_Q,    BR_J,    BR_K,    KC_X,    KC_B,    BR_M,    BR_W,    BR_V,    BR_Z,    KC_ENT,
-    BACKLIT, KC_LGUI, KC_LCTL, NAV,     LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    BACKLIT, KC_LGUI, KC_LCTL, NAV,     LOWER,   KC_ENT,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 /* Qwerty
@@ -114,7 +114,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
     KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    BACKLIT, KC_LGUI, KC_LCTL, KC_LALT, LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    BACKLIT, KC_LGUI, KC_LCTL, NAV,     LOWER,   KC_ENT,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 /* Colemak
@@ -132,7 +132,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_BSPC,
     KC_TAB,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    BACKLIT, KC_LGUI, KC_LCTL, KC_LALT, LOWER,   KC_RSFT, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    BACKLIT, KC_LGUI, KC_LCTL, NAV,     LOWER,   KC_ENT,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 
@@ -386,20 +386,20 @@ uint32_t reset_note(uint32_t trigger_time, void *note) {
     return 0;
 }
 
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    cancel_deferred_exec(tokens[index]);
-    if (clockwise) {
-        melody[index][1][0] = melody[index][1][0] * ET12_MINOR_SECOND;
-        melody[index][0][0] = melody[index][1][0] / ET12_PERFECT_FIFTH;
-        audio_play_melody(&melody[index], 2, false);
-    } else {
-        melody[index][1][0] = melody[index][1][0] / ET12_MINOR_SECOND;
-        melody[index][0][0] = melody[index][1][0] * ET12_TRITONE;
-        audio_play_melody(&melody[index], 2, false);
-    }
-    tokens[index] = defer_exec(1000, reset_note, &melody[index][1][0]);
-    return false;
-}
+// bool encoder_update_user(uint8_t index, bool clockwise) {
+//     cancel_deferred_exec(tokens[index]);
+//     if (clockwise) {
+//         melody[index][1][0] = melody[index][1][0] * ET12_MINOR_SECOND;
+//         melody[index][0][0] = melody[index][1][0] / ET12_PERFECT_FIFTH;
+//         audio_play_melody(&melody[index], 2, false);
+//     } else {
+//         melody[index][1][0] = melody[index][1][0] / ET12_MINOR_SECOND;
+//         melody[index][0][0] = melody[index][1][0] * ET12_TRITONE;
+//         audio_play_melody(&melody[index], 2, false);
+//     }
+//     tokens[index] = defer_exec(1000, reset_note, &melody[index][1][0]);
+//     return false;
+// }
 
 bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {
@@ -454,3 +454,16 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
       break;
   }
 }
+
+#if defined(ENCODER_MAP_ENABLE)
+const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    [_DVORAK] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_QWERTY] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_COLEMAK] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_NAV] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_LOWER] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_PLOVER] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_ADJUST] = { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [_RAISE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
+};
+#endif
